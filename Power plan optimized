@@ -1,0 +1,68 @@
+	•	Minimum processor state: 5-15% (not 100% - this keeps idle temps low!)
+	•	Maximum processor state: 100%
+	•	System cooling policy: Active (fans ramp up before throttling)
+	•	Processor performance boost mode: Aggressive (I recommend to use this if you have a good Fan/AIO and newer gen CPU's )
+	•	Processor performance increase threshold: 10% (responds faster to load)
+	•	Processor performance decrease threshold: 8% (quick to scale down when idle)
+PCI Express:
+	•	Link State Power Management: Off (crucial for low latency with GPU)
+Hard Disk:
+	•	Turn off after: Never (0)
+USB:
+	•	USB selective suspend: Disabled (prevents input lag)
+Sleep/Display:
+	•	Sleep after: Never
+	•	Display timeout: Your preference (doesn't affect performance)
+Advanced Hidden Settings (The Real Magic)
+Open Command Prompt as Administrator and run these commands. First, get your power plan GUID:
+
+cmd
+powercfg /list
+Look for your custom plan and copy its GUID, then set it as active:
+
+cmd
+powercfg /setactive [YOUR_GUID]
+Now apply these performance tweaks:
+1. Processor Performance Settings:
+
+cmd
+:: Set processor performance boost mode to Aggressive
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFBOOSTMODE 2
+
+:: Disable processor performance core parking
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR CPMINCORES 100
+
+:: Set heterogeneous thread scheduling policy (for hybrid CPUs)
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR HETEROPOLICY 3
+
+:: Processor performance autonomous mode (let CPU manage itself efficiently)
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFAUTONOMOUS 0
+
+:: Energy Performance Preference (0 = maximum performance)
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFEPP 0
+
+:: Processor performance increase threshold (lower = more responsive)
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFINCTHRESHOLD 10
+
+:: Processor performance decrease threshold
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFDECTHRESHOLD 8
+
+:: Apply settings
+powercfg /setactive SCHEME_CURRENT
+2. Latency Tolerance Settings:
+
+cmd
+:: Disable latency tolerance for better responsiveness
+powercfg /setacvalueindex SCHEME_CURRENT SUB_SLEEP AWAYMODE 0
+powercfg /setacvalueindex SCHEME_CURRENT SUB_SLEEP ALLOWSTANDBY 0
+
+:: Apply
+powercfg /setactive SCHEME_CURRENT
+3. GPU Power Settings:
+
+cmd
+:: Disable PCIe Link State Power Management
+powercfg /setacvalueindex SCHEME_CURRENT SUB_PCIEXPRESS ASPM 0
+
+:: Apply
+powercfg /setactive SCHEME_CURRENT
